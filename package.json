@@ -1,0 +1,13 @@
+{
+  "name": "backend-material-uploader",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Upload article images into a selected admin material group.",
+  "main": "scripts/backend-material-upload-cli.js",
+  "scripts": {
+    "upload": "node scripts/backend-material-upload-cli.js"
+  },
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}
