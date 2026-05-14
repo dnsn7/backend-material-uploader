@@ -9,7 +9,7 @@ function printUsage() {
 
 示例:
   node scripts/backend-material-upload-cli.js "https://example.com/article-link" "动漫女头"
-  node scripts/backend-material-upload-cli.js "https://example.com/article-link" "动漫男头" --batch-size 9
+  node scripts/backend-material-upload-cli.js "https://example.com/article-link" "动漫男头" --batch-size 3
   node scripts/backend-material-upload-cli.js "" "动漫男头" --action upload-only --start-from 10
 
 可选参数:
@@ -64,7 +64,7 @@ function main() {
   }
 
   const outputDir = getOption('--output-dir', 'D:\\wxgzh-picture');
-  const batchSize = getOption('--batch-size', '9');
+  const batchSize = getOption('--batch-size', '3');
   const startFrom = getOption('--start-from', '1');
   const port = getOption('--port', '9222');
   const explicitWs = getOption('--ws', '');

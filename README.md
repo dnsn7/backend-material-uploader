@@ -109,7 +109,7 @@ npm run upload -- "https://example.com/article-link" "动漫女头"
 ### 指定每批上传数量
 
 ```bash
-node scripts/backend-material-upload-cli.js "https://example.com/article-link" "动漫男头" --batch-size 9
+node scripts/backend-material-upload-cli.js "https://example.com/article-link" "动漫男头" --batch-size 3
 ```
 
 ### 只上传本地目录现有图片，不重新采图
@@ -188,6 +188,16 @@ D:\wxgzh-picture
 
 所以别人也要保证后台里已经有这个分类。
 
+### 6. 默认每批上传多少张？
+
+当前默认值是：
+
+```text
+3
+```
+
+这样可以降低上传过快导致的空文件问题。
+
 
 ## 常见问题
 
@@ -216,4 +226,3 @@ D:\wxgzh-picture
 1. 点击“上传”后，先等待上传输入框就绪
 2. 设置文件后额外停顿，等待页面接收文件
 3. 每批上传完成后再冷却一小段时间再继续下一批
-

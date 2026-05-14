@@ -710,7 +710,7 @@ async function clickUploadTrigger(client, sessionId) {
   if (!clicked) {
     throw new Error('未找到“上传”按钮');
   }
-  await sleep(1200);
+  await sleep(2200);
 }
 
 async function waitForUploadInputReady(client, sessionId, timeoutMs = 10000) {
@@ -737,10 +737,10 @@ async function waitForUploadInputReady(client, sessionId, timeoutMs = 10000) {
     ).catch(() => ({ total: 0, ready: false }));
 
     if (state.ready) {
-      await sleep(800);
+      await sleep(1500);
       return state;
     }
-    await sleep(300);
+    await sleep(500);
   }
   throw new Error('上传输入框未就绪，已超时');
 }
@@ -756,7 +756,7 @@ async function attachFilesToUploadInput(client, sessionId, files) {
   `;
   const attached = await setInputFilesByExpression(client, sessionId, expression, files).catch(() => false);
   if (attached) {
-    await sleep(1800);
+    await sleep(4200);
   }
   return attached;
 }
@@ -801,11 +801,11 @@ async function waitForCountStableIncrease(client, sessionId, groupName, beforeCo
       lastChangedAt = Date.now();
     }
 
-    if (maxCount > beforeCount && Date.now() - lastChangedAt >= 5000) {
+    if (maxCount > beforeCount && Date.now() - lastChangedAt >= 9000) {
       return { currentCount: maxCount, increasedBy: maxCount - beforeCount };
     }
 
-    await sleep(2000);
+    await sleep(3000);
     await client.send('Page.reload', { ignoreCache: false }, sessionId);
     await waitForPageReady(client, sessionId, 20000);
     await ensureLoggedIn(client, sessionId);
@@ -816,7 +816,7 @@ async function waitForCountStableIncrease(client, sessionId, groupName, beforeCo
   return maxCount > beforeCount ? { currentCount: maxCount, increasedBy: maxCount - beforeCount } : null;
 }
 
-async function uploadFiles(client, sessionId, outputDir, groupName, startFrom = 1, batchSize = 9) {
+async function uploadFiles(client, sessionId, outputDir, groupName, startFrom = 1, batchSize = 3) {
   const files = listOutputFiles(outputDir, startFrom);
   if (!files.length) {
     throw new Error(`目录中没有可上传的图片: ${outputDir}，起始编号: ${startFrom}`);
@@ -870,15 +870,14 @@ async function uploadFiles(client, sessionId, outputDir, groupName, startFrom = 
       sessionId,
       groupName,
       currentBeforeCount,
-      Math.max(50000, batch.length * 8000)
+      Math.max(70000, batch.length * 14000)
     );
 
     if (!successState) {
       const state = await getGroupState(client, sessionId).catch(() => ({ currentLabel: '' }));
       const afterCount = await getMaterialCount(client, sessionId);
       throw new Error(
-        `第 ${index + 1} 批上传未确认成功。目标分组: ${groupName}，当前分组: ${state.currentLabel || '未知'}，上传前数量: ${
-          currentBeforeCount ?? '未知'
+        `第 ${index + 1} 批上传未确认成功。目标分组: ${groupName}，当前分组: ${state.currentLabel || '未知'}，上传前数量: ${currentBeforeCount ?? '未知'
         }，上传后数量: ${afterCount ?? '未知'}`
       );
     }
@@ -887,7 +886,7 @@ async function uploadFiles(client, sessionId, outputDir, groupName, startFrom = 
     console.log(`第 ${index + 1} 批完成，当前数量: ${successState.currentCount}，本批新增: ${successState.increasedBy}`);
     if (index < batches.length - 1) {
       console.log('等待上传控件冷却后继续下一批...');
-      await sleep(2500);
+      await sleep(6500);
     }
   }
 
@@ -906,7 +905,7 @@ async function run() {
   const groupName = getArgValue('--group', '');
   const outputDir = getArgValue('--output-dir', 'D:\\wxgzh-picture');
   const startFrom = Number(getArgValue('--start-from', '1'));
-  const batchSize = Number(getArgValue('--batch-size', '9'));
+  const batchSize = Number(getArgValue('--batch-size', '3'));
   const screenshotPath = getArgValue(
     '--screenshot',
     path.resolve(process.cwd(), 'picture', 'backend-material-upload.png')
@@ -943,7 +942,7 @@ async function run() {
       outputDir,
       groupName,
       Number.isFinite(startFrom) ? startFrom : 1,
-      Number.isFinite(batchSize) ? batchSize : 9
+      Number.isFinite(batchSize) ? batchSize : 3
     );
     await saveScreenshot(client, materialPage.sessionId, screenshotPath);
 
@@ -956,7 +955,7 @@ async function run() {
     }
     console.log(`素材分组: ${groupName}`);
     console.log(`起始编号: ${Number.isFinite(startFrom) ? startFrom : 1}`);
-    console.log(`批次大小: ${Number.isFinite(batchSize) ? batchSize : 9}`);
+    console.log(`批次大小: ${Number.isFinite(batchSize) ? batchSize : 3}`);
     console.log(`上传数量: ${uploadedFiles.length}`);
     console.log(`输出目录: ${outputDir}`);
     console.log(`截图已保存: ${screenshotPath}`);
